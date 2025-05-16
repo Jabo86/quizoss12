@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulazione Concorso Operatore Socio Sanitario - Modulo 39</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            margin: 0;
+            padding: 20px;
+            color: #f0f0f0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700; }
+            to { text-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700; }
+        }
+
+        #timer {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.5em;
+            color: #00eaff;
+            text-shadow: 0 0 5px #00eaff;
+        }
+
+        .question-nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .question-box {
+            width: 40px;
+            height: 40px;
+            margin: 8px;
+            background: linear-gradient(45deg, #333, #555);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .question-box:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question-box.answered {
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question.active {
+            display: block;
+        }
+
+        .question h3 {
+            margin: 0 0 15px 0;
+            color: #ffffff;
+            font-size: 1.6em;
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
+            line-height: 1.4;
+        }
+
+        .option {
+            margin: 10px 0;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            color: #ffffff;
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+
+        .option:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateX(5px);
+        }
+
+        .option.correct {
+            background: linear-gradient(90deg, #00eaff, #00b8d4);
+            color: #fff;
+            box-shadow: 0 0 15px #00eaff;
+        }
+
+        .option.wrong {
+            background: linear-gradient(90deg, #ff5252, #d81b60);
+            color: #fff;
+            box-shadow: 0 0 15px #ff5252;
+        }
+
+        .lamp {
+            display: none;
+            margin-left: 15px;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+            transition: transform 0.3s ease;
+        }
+
+        .lamp:hover {
+            transform: scale(1.2);
+        }
+
+        .explanation {
+            margin-top: 15px;
+            font-style: italic;
+            color: #f0f0f0;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            animation: slideIn 0.5s ease;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .nav-button {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.2em;
+            box-shadow: 0 0 10px #ffd700;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .nav-button:disabled {
+            background: #666;
+            color: #ccc;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .nav-button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #ffd700;
+        }
+
+        button#submit {
+            display: block;
+            width: 250px;
+            margin: 20px auto;
+            padding: 15px;
+            background: linear-gradient(45deg, #00eaff, #00b8d4);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.3em;
+            box-shadow: 0 0 15px #00eaff;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        button#submit:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px #00eaff;
+        }
+
+        #result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.8em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Simulazione Concorso Operatore Socio Sanitario - Modulo 39</h1>
+        <div class="question-nav" id="questionNav"></div>
+        <div id="timer">Tempo rimanente: <span id="time">30:00</span></div>
+        <div id="quiz"></div>
+        <div class="navigation">
+            <button class="nav-button" id="prev" disabled>⬅ Indietro</button>
+            <button class="nav-button" id="next">Avanti ➡</button>
+        </div>
+        <button id="submit">Invia Risposte</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Array di domande (1141-1170) con opzioni disposte casualmente
+        const questions = [
+            {
+                question: "Cos’è l’insufficienza renale acuta?",
+                options: ["Un’infezione renale", "Un’improvvisa riduzione della funzione renale", "Un accumulo di liquido nella vescica"],
+                correct: "Un’improvvisa riduzione della funzione renale",
+                explanation: "L’insufficienza renale acuta è un’improvvisa riduzione della funzione renale, che causa oliguria, edema e squilibrio elettrolitico. Non è un’infezione né un accumulo di liquido nella vescica. Gli OSS devono monitorare la diuresi, garantire l’idratazione, assistere nella gestione dei sintomi e segnalare segni come anuria o iperkaliemia."
+            },
+            {
+                question: "Quale è un segno tipico dell’insufficienza renale acuta?",
+                options: ["Ittero", "Oliguria", "Poliuria"],
+                correct: "Oliguria",
+                explanation: "L’oliguria, ovvero una ridotta produzione di urina, è un segno tipico dell’insufficienza renale acuta, accompagnata da edema e stanchezza. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la diuresi, monitorare il peso, garantire l’igiene e segnalare all’infermiere sintomi come dispnea o confusione."
+            },
+            {
+                question: "Cos’è l’insufficienza renale cronica?",
+                options: ["Un accumulo di liquido nei reni", "Una progressiva perdita della funzione renale", "Un’infezione vescicale"],
+                correct: "Una progressiva perdita della funzione renale",
+                explanation: "L’insufficienza renale cronica è una progressiva perdita della funzione renale, spesso dovuta a diabete o ipertensione, che causa anemia, edema e ipertensione. Non è un’infezione né un accumulo di liquido. Gli OSS devono monitorare i parametri vitali, garantire una dieta a basso contenuto di sodio, assistere nella gestione dei sintomi e segnalare segni come stanchezza o prurito."
+            },
+            {
+                question: "Quale è un segno tipico dell’insufficienza renale cronica?",
+                options: ["Poliuria", "Edema periferico", "Ittero"],
+                correct: "Edema periferico",
+                explanation: "L’edema periferico, spesso accompagnato da ipertensione e anemia, è un segno tipico dell’insufficienza renale cronica, dovuto alla ritenzione di liquidi. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare gli edemi, monitorare il peso, garantire il comfort e segnalare all’infermiere sintomi come dispnea o oliguria."
+            },
+            {
+                question: "Cos’è la cistite?",
+                options: ["Un accumulo di liquido nei reni", "Un’infezione della vescica", "Un’infiammazione renale"],
+                correct: "Un’infezione della vescica",
+                explanation: "La cistite è un’infezione della vescica, spesso causata da batteri (es. Escherichia coli), che provoca disuria, urgenza urinaria e bruciore. Non è un accumulo di liquido né un’infiammazione renale. Gli OSS devono monitorare la minzione, garantire l’igiene, assistere nella gestione del dolore e segnalare segni come febbre o ematuria."
+            },
+            {
+                question: "Quale è un segno tipico della cistite?",
+                options: ["Ittero", "Disuria", "Oliguria"],
+                correct: "Disuria",
+                explanation: "La disuria, ovvero bruciore durante la minzione, è un segno tipico della cistite, accompagnata da urgenza e frequenza urinaria. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la minzione, garantire l’idratazione, monitorare il dolore e segnalare all’infermiere sintomi come febbre o urine torbide."
+            },
+            {
+                question: "Cos’è la pielonefrite?",
+                options: ["Un’infezione della vescica", "Un’infezione renale", "Un accumulo di liquido nell’uretere"],
+                correct: "Un’infezione renale",
+                explanation: "La pielonefrite è un’infezione renale, spesso causata da batteri che risalgono dalla vescica, che provoca febbre, dolore lombare e disuria. Non è un’infezione della vescica né un accumulo di liquido. Gli OSS devono monitorare la temperatura, garantire l’igiene, assistere nella gestione del dolore e segnalare segni come vomito o ipotensione."
+            },
+            {
+                question: "Quale è un segno tipico della pielonefrite acuta?",
+                options: ["Poliuria", "Dolore lombare con febbre", "Ittero"],
+                correct: "Dolore lombare con febbre",
+                explanation: "Il dolore lombare con febbre, spesso accompagnato da disuria, è un segno tipico della pielonefrite acuta, dovuta all’infezione renale. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare i sintomi, monitorare i parametri vitali, garantire l’idratazione e segnalare all’infermiere sintomi come brividi o confusione."
+            },
+            {
+                question: "Cos’è la calcolosi renale?",
+                options: ["Un’infezione renale", "Un accumulo di cristalli nelle vie urinarie", "Un accumulo di liquido nella vescica"],
+                correct: "Un accumulo di cristalli nelle vie urinarie",
+                explanation: "La calcolosi renale è un accumulo di cristalli (calcoli) nelle vie urinarie, che provoca colica renale, ematuria e dolore lombare. Non è un’infezione né un accumulo di liquido nella vescica. Gli OSS devono monitorare il dolore, garantire l’idratazione, assistere nella gestione dei sintomi e segnalare segni come febbre o anuria."
+            },
+            {
+                question: "Quale è un segno tipico della calcolosi renale?",
+                options: ["Ittero", "Colica renale", "Oliguria"],
+                correct: "Colica renale",
+                explanation: "La colica renale, un dolore acuto e intermittente al fianco, è un segno tipico della calcolosi renale, accompagnata da ematuria o nausea. L’oliguria (ridotta produzione di urina) può essere secondaria, mentre l’ittero (colorazione giallastra della pelle) non è correlato. Gli OSS devono osservare il dolore, monitorare la diuresi, garantire il comfort e segnalare all’infermiere sintomi come febbre o vomito."
+            },
+            {
+                question: "Cos’è l’incontinenza urinaria?",
+                options: ["Un’infezione renale", "Una perdita involontaria di urina", "Un accumulo di liquido nei reni"],
+                correct: "Una perdita involontaria di urina",
+                explanation: "L’incontinenza urinaria è una perdita involontaria di urina, spesso dovuta a debolezza muscolare o patologie neurologiche, che causa disagio e rischio di infezioni. Non è un’infezione né un accumulo di liquido. Gli OSS devono garantire l’igiene, utilizzare dispositivi assorbenti, assistere nella gestione e segnalare segni come irritazioni cutanee o infezioni."
+            },
+            {
+                question: "Quale è un segno tipico dell’incontinenza urinaria da sforzo?",
+                options: ["Poliuria", "Perdita di urina durante tosse", "Ittero"],
+                correct: "Perdita di urina durante tosse",
+                explanation: "La perdita di urina durante tosse, starnuti o sforzi è un segno tipico dell’incontinenza urinaria da sforzo, dovuta alla debolezza dello sfintere. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare gli episodi, garantire l’igiene, monitorare la cute e segnalare all’infermiere sintomi come infezioni o disagio."
+            },
+            {
+                question: "Cos’è la ritenzione urinaria?",
+                options: ["Un accumulo di liquido nei reni", "Un’incapacità di svuotare completamente la vescica", "Un’infezione vescicale"],
+                correct: "Un’incapacità di svuotare completamente la vescica",
+                explanation: "La ritenzione urinaria è un’incapacità di svuotare completamente la vescica, spesso dovuta a ostruzioni o patologie neurologiche, che provoca distensione addominale e disagio. Non è un’infezione né un accumulo di liquido nei reni. Gli OSS devono monitorare la minzione, garantire l’igiene, assistere nella cateterizzazione e segnalare segni come dolore o febbre."
+            },
+            {
+                question: "Quale è un segno tipico della ritenzione urinaria?",
+                options: ["Ittero", "Distensione addominale inferiore", "Poliuria"],
+                correct: "Distensione addominale inferiore",
+                explanation: "La distensione addominale inferiore, spesso accompagnata da difficoltà a urinare, è un segno tipico della ritenzione urinaria, dovuta all’accumulo di urina in vescica. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare l’addome, monitorare la diuresi, garantire il comfort e segnalare all’infermiere sintomi come febbre o dolore."
+            },
+            {
+                question: "Cos’è l’ipertrofia prostatica benigna?",
+                options: ["Un’infezione della prostata", "Un ingrossamento non canceroso della prostata", "Un accumulo di liquido nella vescica"],
+                correct: "Un ingrossamento non canceroso della prostata",
+                explanation: "L’ipertrofia prostatica benigna è un ingrossamento non canceroso della prostata, comune negli uomini anziani, che provoca difficoltà urinarie, nicturia e ritenzione. Non è un’infezione né un accumulo di liquido. Gli OSS devono monitorare la minzione, garantire l’igiene, assistere nella gestione dei sintomi e segnalare segni come ematuria o infezioni."
+            },
+            {
+                question: "Quale è un segno tipico dell’ipertrofia prostatica benigna?",
+                options: ["Oliguria", "Nicturia", "Ittero"],
+                correct: "Nicturia",
+                explanation: "La nicturia, ovvero il bisogno di urinare frequentemente di notte, è un segno tipico dell’ipertrofia prostatica benigna, accompagnata da flusso urinario debole. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la minzione, monitorare il comfort, garantire l’igiene e segnalare all’infermiere sintomi come ritenzione o febbre."
+            },
+            {
+                question: "Cos’è l’ematuria?",
+                options: ["Un accumulo di liquido nei reni", "La presenza di sangue nelle urine", "Un’infezione renale"],
+                correct: "La presenza di sangue nelle urine",
+                explanation: "L’ematuria è la presenza di sangue nelle urine, che può essere dovuta a infezioni, calcoli o tumori. Non è un’infezione né un accumulo di liquido. Gli OSS devono monitorare le urine, garantire l’igiene, assistere nella gestione dei sintomi e segnalare segni come febbre o dolore lombare."
+            },
+            {
+                question: "Quale è un segno tipico dell’ematuria macroscopica?",
+                options: ["Poliuria", "Urine rosse o rosate", "Ittero"],
+                correct: "Urine rosse o rosate",
+                explanation: "Le urine rosse o rosate sono un segno tipico dell’ematuria macroscopica, visibile a occhio nudo, spesso accompagnata da bruciore. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare le urine, monitorare la diuresi, garantire l’igiene e segnalare all’infermiere sintomi come coaguli o febbre."
+            },
+            {
+                question: "Cos’è il cateterismo vescicale?",
+                options: ["Un’infezione vescicale", "L’inserzione di un catetere per drenare l’urina", "Un accumulo di liquido nei reni"],
+                correct: "L’inserzione di un catetere per drenare l’urina",
+                explanation: "Il cateterismo vescicale è l’inserzione di un catetere per drenare l’urina, utilizzato in caso di ritenzione o incontinenza. Non è un’infezione né un accumulo di liquido. Gli OSS devono garantire l’igiene del catetere, monitorare la diuresi, assistere nella gestione e segnalare segni come infezioni o ostruzioni."
+            },
+            {
+                question: "Quale è una complicanza tipica del cateterismo vescicale?",
+                options: ["Ittero", "Infezione delle vie urinarie", "Poliuria"],
+                correct: "Infezione delle vie urinarie",
+                explanation: "L’infezione delle vie urinarie, spesso accompagnata da febbre o urine torbide, è una complicanza tipica del cateterismo vescicale, dovuta a contaminazione. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare il catetere, garantire l’igiene, monitorare le urine e segnalare all’infermiere sintomi come bruciore o secrezioni."
+            },
+            {
+                question: "Cos’è la dialisi peritoneale?",
+                options: ["Un’infezione renale", "Un trattamento per rimuovere tossine tramite il peritoneo", "Un accumulo di liquido nella vescica"],
+                correct: "Un trattamento per rimuovere tossine tramite il peritoneo",
+                explanation: "La dialisi peritoneale è un trattamento per rimuovere tossine e liquidi in eccesso tramite il peritoneo, usato in pazienti con insufficienza renale. Non è un’infezione né un accumulo di liquido. Gli OSS devono monitorare il sito di accesso, garantire l’igiene, assistere nella gestione e segnalare segni come infezioni o peritonite."
+            },
+            {
+                question: "Quale è una complicanza tipica della dialisi peritoneale?",
+                options: ["Poliuria", "Peritonite", "Ittero"],
+                correct: "Peritonite",
+                explanation: "La peritonite, spesso accompagnata da febbre e dolore addominale, è una complicanza tipica della dialisi peritoneale, dovuta a contaminazione. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare il liquido di dialisi, garantire l’igiene, monitorare i sintomi e segnalare all’infermiere sintomi come torbidità o febbre."
+            },
+            {
+                question: "Cos’è l’emodialisi?",
+                options: ["Un accumulo di liquido nei reni", "Un trattamento per filtrare il sangue", "Un’infezione renale"],
+                correct: "Un trattamento per filtrare il sangue",
+                explanation: "L’emodialisi è un trattamento per filtrare il sangue in pazienti con insufficienza renale, tramite una macchina che rimuove tossine e liquidi. Non è un’infezione né un accumulo di liquido. Gli OSS devono monitorare l’accesso vascolare, garantire l’igiene, assistere durante la procedura e segnalare segni come sanguinamento o ipotensione."
+            },
+            {
+                question: "Quale è una complicanza tipica dell’emodialisi?",
+                options: ["Ittero", "Ipotensione", "Poliuria"],
+                correct: "Ipotensione",
+                explanation: "L’ipotensione, spesso durante la seduta, è una complicanza tipica dell’emodialisi, dovuta alla rapida rimozione di liquidi. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono monitorare la pressione arteriosa, garantire il comfort, osservare i sintomi e segnalare all’infermiere sintomi come vertigini o crampi."
+            },
+            {
+                question: "Cos’è l’urostomia?",
+                options: ["Un’infezione vescicale", "Un’apertura chirurgica per deviare l’urina", "Un accumulo di liquido nei reni"],
+                correct: "Un’apertura chirurgica per deviare l’urina",
+                explanation: "L’urostomia è un’apertura chirurgica per deviare l’urina, spesso necessaria dopo cistectomia, con utilizzo di una sacca esterna. Non è un’infezione né un accumulo di liquido. Gli OSS devono monitorare la stomia, garantire l’igiene, assistere nella gestione della sacca e segnalare segni come infezioni o irritazioni cutanee."
+            },
+            {
+                question: "Quale è una complicanza tipica dell’urostomia?",
+                options: ["Poliuria", "Infezione del sito stomale", "Ittero"],
+                correct: "Infezione del sito stomale",
+                explanation: "L’infezione del sito stomale, accompagnata da arrossamento o secrezioni, è una complicanza tipica dell’urostomia, dovuta a contaminazione. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la stomia, garantire l’igiene, monitorare la cute e segnalare all’infermiere sintomi come febbre o ostruzioni."
+            },
+            {
+                question: "Cos’è la vescica neurologica?",
+                options: ["Un’infezione renale", "Un’alterazione della funzione vescicale da cause neurologiche", "Un accumulo di liquido nella vescica"],
+                correct: "Un’alterazione della funzione vescicale da cause neurologiche",
+                explanation: "La vescica neurologica è un’alterazione della funzione vescicale dovuta a patologie neurologiche (es. sclerosi multipla), che causa incontinenza o ritenzione. Non è un’infezione né un accumulo di liquido. Gli OSS devono monitorare la minzione, garantire l’igiene, assistere nella cateterizzazione e segnalare segni come infezioni o dolore."
+            },
+            {
+                question: "Quale è un segno tipico della vescica neurologica iperattiva?",
+                options: ["Ittero", "Urgenza urinaria", "Oliguria"],
+                correct: "Urgenza urinaria",
+                explanation: "L’urgenza urinaria, spesso accompagnata da incontinenza, è un segno tipico della vescica neurologica iperattiva, dovuta a contrazioni involontarie. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare gli episodi, garantire l’igiene, monitorare la cute e segnalare all’infermiere sintomi come infezioni o disagio."
+            },
+            {
+                question: "Cos’è la gestione dell’igiene perineale?",
+                options: ["Un accumulo di liquido nei reni", "Una procedura per mantenere pulita l’area genitale", "Un’infezione vescicale"],
+                correct: "Una procedura per mantenere pulita l’area genitale",
+                explanation: "La gestione dell’igiene perineale è una procedura per mantenere pulita l’area genitale, essenziale per prevenire infezioni, specialmente in pazienti con cateteri o incontinenza. Non è un’infezione né un accumulo di liquido. Gli OSS devono eseguire l’igiene con tecnica asettica, monitorare la cute, garantire il comfort e segnalare segni come arrossamenti o secrezioni."
+            },
+            {
+                question: "Quale è una precauzione per l’igiene perineale?",
+                options: ["Poliuria", "Pulizia dall’avanti verso il dietro", "Ittero"],
+                correct: "Pulizia dall’avanti verso il dietro",
+                explanation: "La pulizia dall’avanti verso il dietro è una precauzione fondamentale per l’igiene perineale, per prevenire la contaminazione batterica. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono utilizzare acqua tiepida e sapone neutro, garantire l’igiene, monitorare la cute e segnalare all’infermiere sintomi come irritazioni o infezioni."
+            },
+            {
+                question: "Cos’è la raccolta delle urine delle 24 ore?",
+                options: ["Un’infezione renale", "Una procedura per analizzare l’escrezione urinaria in un giorno", "Un accumulo di liquido nella vescica"],
+                correct: "Una procedura per analizzare l’escrezione urinaria in un giorno",
+                explanation: "La raccolta delle urine delle 24 ore è una procedura per analizzare l’escrezione urinaria in un giorno, utilizzata per valutare la funzione renale. Non è un’infezione né un accumulo di liquido. Gli OSS devono garantire la corretta raccolta, conservare le urine, assistere il paziente e segnalare errori come campioni incompleti o contaminazioni."
+            },
+            {
+                question: "Quale è una precauzione per la raccolta delle urine delle 24 ore?",
+                options: ["Ittero", "Scartare la prima minzione", "Poliuria"],
+                correct: "Scartare la prima minzione",
+                explanation: "Scartare la prima minzione è una precauzione fondamentale per la raccolta delle urine delle 24 ore, per garantire l’accuratezza del campione. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono istruire il paziente, garantire la conservazione corretta, monitorare la raccolta e segnalare all’infermiere errori o sintomi associati."
+            }
+        ];
+
+        let currentQuestion = 0;
+
+        // Carica i quadratini di navigazione
+        function loadQuestionNav() {
+            const navDiv = document.getElementById("questionNav");
+            questions.forEach((_, index) => {
+                const box = document.createElement("div");
+                box.classList.add("question-box");
+                box.textContent = index + 1;
+                box.addEventListener("click", () => {
+                    showQuestion(index);
+                });
+                navDiv.appendChild(box);
+            });
+        }
+
+        // Carica il quiz
+        function loadQuiz() {
+            const quizDiv = document.getElementById("quiz");
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement("div");
+                questionDiv.classList.add("question");
+                questionDiv.id = `question-${index}`;
+                questionDiv.innerHTML = `
+                    <h3>${index + 1}. ${q.question}</h3>
+                    ${q.options.map((opt, i) => `
+                        <div class="option" data-value="${opt}">
+                            <input type="radio" name="q${index}" value="${opt}" id="q${index}_${i}">
+                            <label for="q${index}_${i}">${opt}</label>
+                            <span class="lamp" id="lamp-${index}-${i}">💡</span>
+                        </div>
+                    `).join("")}
+                    <div class="explanation" id="exp-${index}">${q.explanation}</div>
+                `;
+                quizDiv.appendChild(questionDiv);
+
+                // Aggiungi evento per accendere il quadratino
+                const radios = questionDiv.querySelectorAll(`input[name="q${index}"]`);
+                radios.forEach(radio => {
+                    radio.addEventListener("change", () => {
+                        document.querySelectorAll(".question-box")[index].classList.add("answered");
+                    });
+                });
+            });
+            showQuestion(0); // Mostra la prima domanda
+        }
+
+        // Mostra la domanda corrente
+        function showQuestion(index) {
+            document.querySelectorAll(".question").forEach(q => q.classList.remove("active"));
+            document.getElementById(`question-${index}`).classList.add("active");
+            currentQuestion = index;
+
+            // Gestione stato pulsanti
+            document.getElementById("prev").disabled = currentQuestion === 0;
+            document.getElementById("next").disabled = currentQuestion === questions.length - 1;
+        }
+
+        // Timer (30 minuti)
+        let timeLeft = 30 * 60;
+        function startTimer() {
+            const timer = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById("time").textContent = 
+                    `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    checkAnswers();
+                }
+            }, 1000);
+        }
+
+        // Controllo risposte e feedback visivo
+        function checkAnswers() {
+            let score = 0;
+            questions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                const options = document.querySelectorAll(`#question-${index} .option`);
+
+                options.forEach(option => {
+                    const value = option.getAttribute("data-value");
+                    if (value === q.correct) {
+                        option.classList.add("correct");
+                        const lamp = option.querySelector(".lamp");
+                        lamp.style.display = "inline";
+                        lamp.addEventListener("click", () => {
+                            const explanation = document.getElementById(`exp-${index}`);
+                            explanation.style.display = "block";
+                        });
+                    }
+                });
+
+                if (selected) {
+                    if (selected.value === q.correct) {
+                        score++;
+                    } else {
+                        selected.parentElement.classList.add("wrong");
+                    }
+                }
+            });
+
+            const resultDiv = document.getElementById("result");
+            resultDiv.textContent = `Punteggio: ${score} / ${questions.length}`;
+            document.getElementById("submit").disabled = true;
+            document.getElementById("prev").disabled = true;
+            document.getElementById("next").disabled = true;
+
+            // Disabilita i radio button dopo l'invio
+            document.querySelectorAll("input[type=radio]").forEach(radio => {
+                radio.disabled = true;
+            });
+        }
+
+        // Inizializzazione
+        window.onload = () => {
+            loadQuestionNav();
+            loadQuiz();
+            startTimer();
+
+            document.getElementById("prev").addEventListener("click", () => {
+                if (currentQuestion > 0) showQuestion(currentQuestion - 1);
+            });
+
+            document.getElementById("next").addEventListener("click", () => {
+                if (currentQuestion < questions.length - 1) showQuestion(currentQuestion + 1);
+            });
+
+            document.getElementById("submit").addEventListener("click", checkAnswers);
+        };
+    </script>
+</body>
+</html>
